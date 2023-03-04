@@ -1,5 +1,5 @@
+use super::all::{Clamp, Lerp, Max, Min, Vec2};
 use pyo3::{exceptions::PyValueError, prelude::*};
-use super::all::{Clamp, Max, Min, Vec2, Lerp};
 
 #[pyclass]
 #[derive(Copy, Clone, Debug, PartialEq, PartialOrd, Default)]
@@ -15,28 +15,56 @@ pub struct Vec3 {
 #[pymethods]
 impl Vec3 {
     #[classattr]
-    pub const ZERO: Self = Self { x: 0.0, y: 0.0, z: 0.0 };
+    pub const ZERO: Self = Self {
+        x: 0.0,
+        y: 0.0,
+        z: 0.0,
+    };
     #[classattr]
-    pub const UP: Self = Self { x: 0.0, y: 1.0 , z: 0.0};
+    pub const UP: Self = Self {
+        x: 0.0,
+        y: 1.0,
+        z: 0.0,
+    };
     #[classattr]
-    pub const DOWN: Self = Self { x: 0.0, y: -1.0, z: 0.0 };
+    pub const DOWN: Self = Self {
+        x: 0.0,
+        y: -1.0,
+        z: 0.0,
+    };
     #[classattr]
-    pub const LEFT: Self = Self { x: -1.0, y: 0.0, z: 0.0 };
+    pub const LEFT: Self = Self {
+        x: -1.0,
+        y: 0.0,
+        z: 0.0,
+    };
     #[classattr]
-    pub const RIGHT: Self = Self { x: 1.0, y: 0.0, z: 0.0 };
+    pub const RIGHT: Self = Self {
+        x: 1.0,
+        y: 0.0,
+        z: 0.0,
+    };
     #[classattr]
-    pub const Z_FORWARD: Self = Self { x: 0.0, y: 0.0, z: 1.0 };
+    pub const Z_FORWARD: Self = Self {
+        x: 0.0,
+        y: 0.0,
+        z: 1.0,
+    };
     #[classattr]
-    pub const Z_BACK: Self = Self { x: 0.0, y: 0.0, z: -1.0 };
+    pub const Z_BACK: Self = Self {
+        x: 0.0,
+        y: 0.0,
+        z: -1.0,
+    };
 
     #[new]
     pub const fn new(x: f64, y: f64, z: f64) -> Self {
         Self { x, y, z }
     }
     pub fn normalised(&self) -> Self {
-    	if self == &Vec3::new(0.0, 0.0, 0.0) {
-    		return *self;
-    	}
+        if self == &Vec3::new(0.0, 0.0, 0.0) {
+            return *self;
+        }
         Self {
             x: self.x / self.magnitude(),
             y: self.y / self.magnitude(),
@@ -44,7 +72,7 @@ impl Vec3 {
         }
     }
     pub fn magnitude(&self) -> f64 {
-        (self.x * self.x + self.y * self.y + self.z * self.z).sqrt() 
+        (self.x * self.x + self.y * self.y + self.z * self.z).sqrt()
     }
     pub fn rotated(&self, rotation: Vec2) -> Self {
         let theta = Vec2::new(rotation.x.to_radians(), rotation.y.to_radians());
@@ -55,7 +83,8 @@ impl Vec3 {
         Self {
             x: self.x * theta.y.cos() + self.z * theta.y.sin(),
             y: self.y * theta.x.cos() - self.z * theta.x.sin(),
-            z: self.y * theta.x.sin() + (-self.x * theta.y.sin() + self.z * theta.y.cos()) * theta.x.cos(),
+            z: self.y * theta.x.sin()
+                + (-self.x * theta.y.sin() + self.z * theta.y.cos()) * theta.x.cos(),
         }
     }
     #[pyo3(signature=(ndigits=1.0))]
@@ -165,7 +194,11 @@ impl Vec3 {
         self.lerp(rhs, lerp)
     }
     pub fn floor(&self) -> Self {
-        Self { x: self.x.floor(), y: self.y.floor(), z: self.z.floor() }
+        Self {
+            x: self.x.floor(),
+            y: self.y.floor(),
+            z: self.z.floor(),
+        }
     }
     pub fn __repr__(&self) -> String {
         format!("Vec3({0}, {1}, {2})", self.x, self.y, self.z)
@@ -177,7 +210,7 @@ impl Max for Vec3 {
         Self {
             x: self.x.max(rhs.x),
             y: self.y.max(rhs.y),
-            z: self.z.max(rhs.z)
+            z: self.z.max(rhs.z),
         }
     }
 }
@@ -187,12 +220,10 @@ impl Min for Vec3 {
         Self {
             x: self.x.min(rhs.x),
             y: self.y.min(rhs.y),
-            z: self.z.min(rhs.z)
+            z: self.z.min(rhs.z),
         }
     }
 }
-
-impl Clamp for Vec3 {}
 
 impl std::ops::Add for Vec3 {
     type Output = Self;
@@ -282,13 +313,13 @@ impl std::ops::DivAssign<f64> for Vec3 {
     }
 }
 
-impl Lerp for Vec3 {
-    type Output = Self;
-    fn lerp(&self, rhs: &Self, lerp: f64) -> Self::Output {
-        Self {
-            x: self.x.lerp(&rhs.x, lerp),
-            y: self.y.lerp(&rhs.y, lerp),
-            z: self.z.lerp(&rhs.z, lerp)
+impl Lerp for &Vec3 {
+    type Output = Vec3;
+    fn lerp(self, rhs: Self, lerp: f64) -> Self::Output {
+        Vec3 {
+            x: self.x.lerp(rhs.x, lerp),
+            y: self.y.lerp(rhs.y, lerp),
+            z: self.z.lerp(rhs.z, lerp),
         }
     }
 }

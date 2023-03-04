@@ -17,3 +17,6 @@ crate-type = ["cdylib"]
 device_query = "1.1.2"
 pyo3 = { git = "https://github.com/pyo3/pyo3", features = ["extension-module"] }
 spin_sleep = "1.1.1"
+
+[patch.crates-io]
+device_query = { git = "https://github.com/aurlex/device_query" }

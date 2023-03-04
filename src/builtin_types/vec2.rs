@@ -1,5 +1,5 @@
+use super::all::{Clamp, Lerp, Max, Min};
 use pyo3::{exceptions::PyValueError, prelude::*};
-use super::{all::{Clamp, Max, Min, Lerp}};
 
 #[pyclass]
 #[derive(Copy, Clone, Debug, PartialEq, PartialOrd, Default)]
@@ -28,16 +28,16 @@ impl Vec2 {
         Self { x, y }
     }
     pub fn normalised(&self) -> Self {
-    	if self == &Vec2::new(0.0, 0.0) {
-    		return *self;
-    	}
+        if self == &Vec2::new(0.0, 0.0) {
+            return *self;
+        }
         Self {
             x: self.x / self.magnitude(),
             y: self.y / self.magnitude(),
         }
     }
     pub fn magnitude(&self) -> f64 {
-        (self.x * self.x + self.y * self.y).sqrt() 
+        (self.x * self.x + self.y * self.y).sqrt()
     }
     pub fn rotated(&self, rotation: f64) -> Self {
         let theta = rotation.to_radians();
@@ -152,7 +152,10 @@ impl Vec2 {
         self.lerp(rhs, lerp)
     }
     pub fn floor(&self) -> Self {
-        Self { x: self.x.floor(), y: self.y.floor() }
+        Self {
+            x: self.x.floor(),
+            y: self.y.floor(),
+        }
     }
     pub fn __repr__(&self) -> String {
         format!("Vec2({0}, {1})", self.x, self.y)
@@ -163,7 +166,7 @@ impl Max for Vec2 {
     fn max(&self, rhs: &Self) -> Self {
         Self {
             x: self.x.max(rhs.x),
-            y: self.y.max(rhs.y)
+            y: self.y.max(rhs.y),
         }
     }
 }
@@ -172,12 +175,10 @@ impl Min for Vec2 {
     fn min(&self, rhs: &Self) -> Self {
         Self {
             x: self.x.min(rhs.x),
-            y: self.y.min(rhs.y)
+            y: self.y.min(rhs.y),
         }
     }
 }
-
-impl Clamp for Vec2 {}
 
 impl std::ops::Add for Vec2 {
     type Output = Self;
@@ -261,12 +262,12 @@ impl std::ops::DivAssign<f64> for Vec2 {
     }
 }
 
-impl Lerp for Vec2 {
-    type Output = Self;
-    fn lerp(&self, rhs: &Self, lerp: f64) -> Self::Output {
-        Self {
-            x: self.x.lerp(&rhs.x, lerp),
-            y: self.y.lerp(&rhs.y, lerp),
+impl Lerp for &Vec2 {
+    type Output = Vec2;
+    fn lerp(self, rhs: Self, lerp: f64) -> Self::Output {
+        Vec2 {
+            x: self.x.lerp(rhs.x, lerp),
+            y: self.y.lerp(rhs.y, lerp),
         }
     }
 }

@@ -6,7 +6,7 @@ use crate::builtin_types::all::*;
 #[pyclass(subclass, extends = Node)]
 #[derive(Default, Debug, Clone)]
 pub struct Node2D {
-    relative_position: Vec2,
+    position: Vec2,
     rotation_rad: f64,
 }
 
@@ -15,7 +15,7 @@ impl Node2D {
     #[new]
     pub fn new() -> PyClassInitializer<Self> {
         PyClassInitializer::from(Node::new()).add_subclass(Self {
-            relative_position: Vec2::ZERO,
+            position: Vec2::ZERO,
             rotation_rad: 0.0,
         })
     }

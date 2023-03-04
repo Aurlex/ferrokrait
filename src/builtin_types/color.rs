@@ -1,5 +1,5 @@
+use super::all::{Clamp, Lerp, Max, Min, Vec4};
 use pyo3::prelude::*;
-use super::all::{Clamp, Min, Max, Lerp, Vec4};
 
 #[pyclass]
 pub struct Color {
@@ -35,16 +35,14 @@ impl Max for Color {
     }
 }
 
-impl Clamp for Color {}
-
-impl Lerp<Self, u8> for Color {
-    type Output = Self;
-    fn lerp(&self, rhs: &Self, lerp: u8) -> Self::Output {
-        Self {
-            r: self.r.lerp(&rhs.r, lerp),
-            g: self.g.lerp(&rhs.g, lerp),
-            b: self.b.lerp(&rhs.b, lerp),
-            a: self.a.lerp(&rhs.a, lerp),
+impl Lerp<Self, u8> for &Color {
+    type Output = Color;
+    fn lerp(self, rhs: Self, lerp: u8) -> Self::Output {
+        Color {
+            r: self.r.lerp(rhs.r, lerp),
+            g: self.g.lerp(rhs.g, lerp),
+            b: self.b.lerp(rhs.b, lerp),
+            a: self.a.lerp(rhs.a, lerp),
         }
     }
 }

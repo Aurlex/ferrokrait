@@ -1,5 +1,5 @@
+use super::all::{Clamp, Lerp, Max, Min};
 use pyo3::{exceptions::PyValueError, prelude::*};
-use super::all::{Clamp, Max, Min, Lerp};
 
 #[pyclass]
 #[derive(Copy, Clone, Debug, PartialEq, PartialOrd, Default)]
@@ -17,41 +17,86 @@ pub struct Vec4 {
 #[pymethods]
 impl Vec4 {
     #[classattr]
-    pub const ZERO: Self = Self { x: 0.0, y: 0.0, z: 0.0, w: 0.0 };
+    pub const ZERO: Self = Self {
+        x: 0.0,
+        y: 0.0,
+        z: 0.0,
+        w: 0.0,
+    };
     #[classattr]
-    pub const UP: Self = Self { x: 0.0, y: 1.0 , z: 0.0, w: 0.0 };
+    pub const UP: Self = Self {
+        x: 0.0,
+        y: 1.0,
+        z: 0.0,
+        w: 0.0,
+    };
     #[classattr]
-    pub const DOWN: Self = Self { x: 0.0, y: -1.0, z: 0.0, w: 0.0 };
+    pub const DOWN: Self = Self {
+        x: 0.0,
+        y: -1.0,
+        z: 0.0,
+        w: 0.0,
+    };
     #[classattr]
-    pub const LEFT: Self = Self { x: -1.0, y: 0.0, z: 0.0, w: 0.0 };
+    pub const LEFT: Self = Self {
+        x: -1.0,
+        y: 0.0,
+        z: 0.0,
+        w: 0.0,
+    };
     #[classattr]
-    pub const RIGHT: Self = Self { x: 1.0, y: 0.0, z: 0.0, w: 0.0 };
+    pub const RIGHT: Self = Self {
+        x: 1.0,
+        y: 0.0,
+        z: 0.0,
+        w: 0.0,
+    };
     #[classattr]
-    pub const Z_FORWARD: Self = Self { x: 0.0, y: 0.0, z: 1.0, w: 0.0 };
+    pub const Z_FORWARD: Self = Self {
+        x: 0.0,
+        y: 0.0,
+        z: 1.0,
+        w: 0.0,
+    };
     #[classattr]
-    pub const Z_BACK: Self = Self { x: 0.0, y: 0.0, z: -1.0, w: 0.0 };
+    pub const Z_BACK: Self = Self {
+        x: 0.0,
+        y: 0.0,
+        z: -1.0,
+        w: 0.0,
+    };
     #[classattr]
-    pub const W_FORWARD: Self = Self { x: 0.0, y: 0.0, z: 0.0, w: 1.0 };
+    pub const W_FORWARD: Self = Self {
+        x: 0.0,
+        y: 0.0,
+        z: 0.0,
+        w: 1.0,
+    };
     #[classattr]
-    pub const W_BACK: Self = Self { x: 0.0, y: 0.0, z: 0.0, w: -1.0 };
+    pub const W_BACK: Self = Self {
+        x: 0.0,
+        y: 0.0,
+        z: 0.0,
+        w: -1.0,
+    };
 
     #[new]
     pub const fn new(x: f64, y: f64, z: f64, w: f64) -> Self {
         Self { x, y, z, w }
     }
     pub fn normalised(&self) -> Self {
-    	if self == &Vec4::new(0.0, 0.0, 0.0, 0.0) {
-    		return *self;
-    	}
+        if self == &Vec4::new(0.0, 0.0, 0.0, 0.0) {
+            return *self;
+        }
         Self {
             x: self.x / self.magnitude(),
             y: self.y / self.magnitude(),
             z: self.z / self.magnitude(),
-            w: self.w / self.magnitude()
+            w: self.w / self.magnitude(),
         }
     }
     pub fn magnitude(&self) -> f64 {
-        (self.x * self.x + self.y * self.y + self.z * self.z + self.w * self.w).sqrt() 
+        (self.x * self.x + self.y * self.y + self.z * self.z + self.w * self.w).sqrt()
     }
     #[pyo3(signature=(ndigits=1.0))]
     pub fn __round__(&self, ndigits: f64) -> Self {
@@ -161,7 +206,12 @@ impl Vec4 {
         self.lerp(rhs, lerp)
     }
     pub fn floor(&self) -> Self {
-        Self { x: self.x.floor(), y: self.y.floor(), z: self.z.floor(), w: self.w.floor() }
+        Self {
+            x: self.x.floor(),
+            y: self.y.floor(),
+            z: self.z.floor(),
+            w: self.w.floor(),
+        }
     }
     pub fn __repr__(&self) -> String {
         format!("Vec4({0}, {1}, {2}, {3})", self.x, self.y, self.z, self.w)
@@ -174,7 +224,7 @@ impl Max for Vec4 {
             x: self.x.max(rhs.x),
             y: self.y.max(rhs.y),
             z: self.z.max(rhs.z),
-            w: self.w.max(rhs.w)
+            w: self.w.max(rhs.w),
         }
     }
 }
@@ -185,17 +235,20 @@ impl Min for Vec4 {
             x: self.x.min(rhs.x),
             y: self.y.min(rhs.y),
             z: self.z.min(rhs.z),
-            w: self.w.min(rhs.w)
+            w: self.w.min(rhs.w),
         }
     }
 }
 
-impl Clamp for Vec4 {}
-
 impl std::ops::Add for Vec4 {
     type Output = Self;
     fn add(self, rhs: Self) -> Self::Output {
-        Self::new(self.x + rhs.x, self.y + rhs.y, self.z + rhs.z, self.w + rhs.w)
+        Self::new(
+            self.x + rhs.x,
+            self.y + rhs.y,
+            self.z + rhs.z,
+            self.w + rhs.w,
+        )
     }
 }
 impl std::ops::AddAssign for Vec4 {
@@ -209,7 +262,12 @@ impl std::ops::AddAssign for Vec4 {
 impl std::ops::Sub for Vec4 {
     type Output = Self;
     fn sub(self, rhs: Self) -> Self::Output {
-        Self::new(self.x - rhs.x, self.y - rhs.y, self.z - rhs.z, self.w + rhs.w)
+        Self::new(
+            self.x - rhs.x,
+            self.y - rhs.y,
+            self.z - rhs.z,
+            self.w + rhs.w,
+        )
     }
 }
 
@@ -225,7 +283,12 @@ impl std::ops::SubAssign for Vec4 {
 impl std::ops::Mul for Vec4 {
     type Output = Self;
     fn mul(self, rhs: Self) -> Self::Output {
-        Self::new(self.x * rhs.x, self.y * rhs.y, self.z * rhs.z, self.w + rhs.w)
+        Self::new(
+            self.x * rhs.x,
+            self.y * rhs.y,
+            self.z * rhs.z,
+            self.w + rhs.w,
+        )
     }
 }
 
@@ -257,7 +320,12 @@ impl std::ops::MulAssign<f64> for Vec4 {
 impl std::ops::Div for Vec4 {
     type Output = Self;
     fn div(self, rhs: Self) -> Self::Output {
-        Self::new(self.x / rhs.x, self.y / rhs.y, self.z / rhs.z, self.w / rhs.w)
+        Self::new(
+            self.x / rhs.x,
+            self.y / rhs.y,
+            self.z / rhs.z,
+            self.w / rhs.w,
+        )
     }
 }
 
@@ -286,14 +354,14 @@ impl std::ops::DivAssign<f64> for Vec4 {
     }
 }
 
-impl Lerp for Vec4 {
-    type Output = Self;
-    fn lerp(&self, rhs: &Self, lerp: f64) -> Self::Output {
-        Self {
-            x: self.x.lerp(&rhs.x, lerp),
-            y: self.y.lerp(&rhs.y, lerp),
-            z: self.z.lerp(&rhs.z, lerp),
-            w: self.w.lerp(&rhs.w, lerp)
+impl Lerp for &Vec4 {
+    type Output = Vec4;
+    fn lerp(self, rhs: Self, lerp: f64) -> Self::Output {
+        Vec4 {
+            x: self.x.lerp(rhs.x, lerp),
+            y: self.y.lerp(rhs.y, lerp),
+            z: self.z.lerp(rhs.z, lerp),
+            w: self.w.lerp(rhs.w, lerp),
         }
     }
 }

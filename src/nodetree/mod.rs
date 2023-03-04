@@ -2,12 +2,21 @@
 use pyo3::{exceptions::PySystemError, prelude::*, types::PyType, PyTraverseError, PyVisit};
 use spin_sleep::LoopHelper;
 
+use std::cell::LazyCell;
+static mut NODETREE: LazyCell<PyObject> =
+    LazyCell::new(|| Python::with_gil(|py| -> PyObject { NodeTree::new().into_py(py) }));
+
+#[pyfunction]
+pub unsafe fn get_tree<'a>() -> &'a PyObject {
+    &NODETREE
+}
+
 pub mod node;
 
-use crate::utils::*;
+use crate::{builtin_types::all::Input, utils::*};
 use node::*;
 
-#[pyclass]
+#[pyclass(name = "Tree")]
 #[derive(Default, Clone, Debug)]
 pub struct NodeTree {
     nodes: Vec<PyObject>,
@@ -16,13 +25,6 @@ pub struct NodeTree {
 
 #[pymethods]
 impl NodeTree {
-    #[new]
-    pub const fn new() -> Self {
-        Self {
-            nodes: Vec::new(),
-            running: false,
-        }
-    }
     pub fn add_node(slf: Py<Self>, py: Python, class_object: PyObject) -> PyResult<Py<Self>> {
         let object: PyObject = class_object.call0(py)?;
         if object.is_subclass::<Node>(py)? {
@@ -39,6 +41,7 @@ impl NodeTree {
         }
         Ok(slf)
     }
+    /// ====> _|_|_|_ -----|-----
     pub fn run(slf: Py<Self>, py: Python, fps: Option<usize>) -> PyResult<()> {
         if slf.borrow(py).running {
             return Err(PySystemError::new_err("This NodeTree is already running!"));
@@ -63,6 +66,11 @@ impl NodeTree {
         loop {
             let delta: f64 = loop_helper.loop_start_s();
             py.check_signals()?;
+            if unsafe { !Input::all_keys().is_empty() } {
+                for node in nodes {
+                    node.call_method0(py, "_on_key_input_recursive")?;
+                }
+            }
             for node in nodes {
                 node.call_method1(py, "_process_recursive", (delta,))?;
             }
@@ -79,5 +87,17 @@ impl NodeTree {
     }
     pub fn __clear__(&mut self) {
         self.nodes.clear()
+    }
+}
+
+impl NodeTree {
+    pub fn get_from_id(&self, id: usize) -> Option<&PyObject> {
+        self.nodes.get(id)
+    }
+    pub const fn new() -> Self {
+        Self {
+            nodes: Vec::new(),
+            running: false,
+        }
     }
 }
