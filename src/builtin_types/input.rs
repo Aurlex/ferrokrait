@@ -15,7 +15,7 @@ impl Input {
         if key == Keycode::Any {
             return !QUERY_HANDLER.get_keys().is_empty() as i8;
         }
-        QUERY_HANDLER.get_keys().binary_search(&key).unwrap() as i8
+        QUERY_HANDLER.get_keys().contains(&key) as i8
     }
     #[staticmethod]
     pub unsafe fn all_keys() -> Vec<Keycode> {
