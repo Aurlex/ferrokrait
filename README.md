@@ -20,8 +20,8 @@ class TestNodeSubclass(TestNode):
     def _ready(self):
         print("World!")
 
-# NodeTree ( new ), add node ( TestNodeSubclass ), run ( at a 60 fps cap )
-NodeTree().add_node(TestNodeSubclass).run(60)
+# get the tree ( ), add a node ( TestNodeSubclass ), run the nodetree ( at a 60 fps cap )
+get_tree().add_node(TestNodeSubclass).run(60)
 ```
 Output:
 ```
